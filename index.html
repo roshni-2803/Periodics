@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Periodics | Understand Your Cycle</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+          --lavender-mist: #F9F3FA;
+          --dusty-rose: #D99BB8;
+          --soft-plum: #76558F;
+          --pale-lavender: #E9DDF2;
+          --warm-cream: #FFF8F3;
+          --deep-plum: #44334F;
+          --white: #FFFFFF;
+          --muted: #84768B;
+          --line: #EDE3F0;
+        }
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+          margin: 0;
+          background: var(--lavender-mist);
+          color: var(--deep-plum);
+          font-family: 'Plus Jakarta Sans', Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+          line-height: 1.55;
+        }
+        button, input, textarea, select { font: inherit; }
+        button, a { -webkit-tap-highlight-color: transparent; }
+        a { color: inherit; text-decoration: none; }
+        button { cursor: pointer; }
+        .shell { width: min(1160px, calc(100% - 40px)); margin: 0 auto; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen" class="fixed inset-0 bg-[#44334F]/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-[30px] shadow-2xl max-w-md w-full p-8 border border-[#EDE3F0]">
+            <div class="text-center mb-6">
+                <div class="w-24 h-24 bg-[#F9F3FA] rounded-full flex items-center justify-center mx-auto mb-3 shadow-inner border border-[#EDE3F0] p-2">
+                    <img src="logo-periodics.png" alt="Periodics Logo" class="w-full h-full object-contain" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 40 40\'><path d=\'M20 4C25 10 26 14 20 20C14 14 15 10 20 4Z\' fill=\'%23D99BB8\'/><circle cx=\'20\' cy=\'20\' r=\'4\' fill=\'%23FFF8F3\'/></svg>'">
+                </div>
+                <h1 class="text-2xl font-bold text-[#44334F]">Periodics</h1>
+                <p class="text-xs text-[#76558F] font-semibold tracking-wide uppercase mt-1">Understand Your Cycle. Care for Yourself.</p>
+            </div>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-[#84768B] mb-1">Full Name</label>
+                    <input type="text" id="user-name" required class="w-full px-4 py-3 rounded-xl border border-[#EDE3F0] focus:ring-2 focus:ring-[#76558F] focus:outline-none transition text-sm bg-[#FFFCFF]">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-[#84768B] mb-1">Email Address</label>
+                    <input type="email" id="user-email" required class="w-full px-4 py-3 rounded-xl border border-[#EDE3F0] focus:ring-2 focus:ring-[#76558F] focus:outline-none transition text-sm bg-[#FFFCFF]">
+                </div>
+                <button type="submit" class="w-full py-3.5 bg-[#76558F] hover:bg-[#65467E] text-white font-semibold rounded-xl shadow-lg shadow-[#76558F]/20 transition duration-200">
+                    Sign In & Get Started
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MAIN APP WRAPPER -->
+    <div id="main-app" class="flex-1 flex flex-col hidden">
+        
+        <!-- HEADER WITH LOGO & TAGLINE -->
+        <header class="sticky top-0 z-40 bg-[rgba(249,243,250,0.92)] backdrop-blur-md border-b border-[#EDE3F0]">
+            <div class="shell min-h-[78px] flex items-center justify-between gap-6 py-2">
+                <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('home')">
+                    <img src="logo-periodics.png" alt="Periodics Logo" class="h-11 w-auto object-contain" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 40 40\'><path d=\'M20 4C25 10 26 14 20 20C14 14 15 10 20 4Z\' fill=\'%23D99BB8\'/><circle cx=\'20\' cy=\'20\' r=\'4\' fill=\'%23FFF8F3\'/></svg>'">
+                    <div>
+                        <span class="text-xl font-extrabold tracking-tight text-[#44334F] block leading-tight">Periodics</span>
+                        <span class="text-[10px] font-bold text-[#76558F] uppercase tracking-wider block">Understand Your Cycle. Care for Yourself.</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2 sm:space-x-4">
+                    <nav class="hidden md:flex items-center gap-6 text-[#71647A] text-[0.92rem] font-semibold">
+                        <button onclick="switchTab('home')" class="hover:text-[#76558F] transition bg-transparent border-0 cursor-pointer">Home</button>
+                        <button onclick="switchTab('home'); setTimeout(() => document.getElementById('calendar-widget').scrollIntoView({behavior: 'smooth'}), 100);" class="hover:text-[#76558F] transition bg-transparent border-0 cursor-pointer">Calendar</button>
+                        <button onclick="switchTab('water')" class="hover:text-[#76558F] transition bg-transparent border-0 cursor-pointer">Water</button>
+                        <button onclick="switchTab('faq')" class="hover:text-[#76558F] transition bg-transparent border-0 cursor-pointer">FAQ</button>
+                    </nav>
+                    <button onclick="logoutUser()" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-white border border-[#EDE3F0] hover:bg-[#F0E8F5] text-[#44334F] transition shadow-sm" title="Log Out">
+                        <i class="fa-solid fa-right-from-bracket mr-1"></i> Log Out
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTAINER -->
+        <main class="flex-1 shell py-6 space-y-6">
+
+            <!-- HOME TAB -->
+            <div id="tab-home" class="space-y-6">
+                
+                <!-- DOCTOR ADVISORY BANNER -->
+                <div id="doctor-advisory-banner" class="hidden bg-amber-50 border-l-4 border-amber-500 p-4 rounded-2xl shadow-sm flex items-start space-x-3">
+                    <div class="text-amber-500 text-xl mt-0.5"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                    <div>
+                        <h4 class="text-sm font-bold text-amber-900">Medical Consultation Recommended</h4>
+                        <p class="text-xs text-amber-700 mt-0.5" id="advisory-text">It has been over 3-4 months since your last recorded period. For your well-being, please check in with a doctor.</p>
+                    </div>
+                </div>
+
+                <!-- TOP SECTION: PROFILE CARD -->
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+                    <div onclick="openQuestionnaire()" class="flex-1 bg-white rounded-[26px] p-6 shadow-sm border border-[#EDE3F0] flex items-center justify-between gap-6 cursor-pointer hover:border-[#76558F] hover:shadow-md transition">
+                        <div class="flex items-center space-x-4">
+                            <div class="relative group">
+                                <img id="profile-avatar-img" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Avatar" class="w-20 h-20 rounded-2xl object-cover border-2 border-[#D99BB8] shadow-inner">
+                                <button onclick="event.stopPropagation(); openAvatarModal();" class="absolute -bottom-1 -right-1 bg-[#76558F] text-white p-1.5 rounded-full text-xs shadow-md hover:bg-[#65467E] transition" title="Change Avatar">
+                                    <i class="fa-solid fa-camera"></i>
+                                </button>
+                            </div>
+                            <div>
+                                <div class="flex items-center space-x-2">
+                                    <h2 id="profile-display-name" class="text-xl font-bold text-[#44334F]">User Name</h2>
+                                    <span id="weight-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider"></span>
+                                </div>
+                                <p id="profile-display-email" class="text-xs text-[#84768B]">user@example.com</p>
+                                <div class="flex flex-wrap items-center gap-3 mt-2 text-xs font-semibold text-[#44334F]">
+                                    <span>Age: <strong id="profile-display-age" class="text-[#76558F]">--</strong></span>
+                                    <span>Height: <strong id="profile-display-height" class="text-[#76558F]">--</strong></span>
+                                    <span>Weight: <strong id="profile-display-weight" class="text-[#76558F]">--</strong> kg</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-[#84768B] pr-2 hidden sm:block">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    <button onclick="openQuestionnaire()" class="px-6 py-4 bg-[#76558F] hover:bg-[#65467E] text-white text-xs font-bold rounded-[22px] shadow-md transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-pen-to-square text-base"></i>
+                        <span>Update Profile</span>
+                    </button>
+                </div>
+
+                <!-- NAPKIN REMINDER -->
+                <div id="napkin-reminder-card" class="hidden bg-gradient-to-r from-[#76558F] to-[#D99BB8] text-white rounded-[26px] p-6 shadow-md relative overflow-hidden">
+                    <div class="absolute right-0 top-0 translate-x-4 -translate-y-4 text-white/10 text-9xl pointer-events-none">
+                        <i class="fa-solid fa-shield-heart"></i>
+                    </div>
+                    <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-4">
+                        <div class="space-y-1 text-center md:text-left">
+                            <span class="inline-block px-3 py-1 bg-white/20 rounded-full text-[10px] font-bold tracking-widest uppercase mb-1">Period Active Notice</span>
+                            <h3 class="text-lg font-bold">Sanitary Napkin Hygiene Reminder</h3>
+                            <p class="text-xs text-white/90">For healthy hygiene and infection prevention, remember to change your sanitary napkin every 8 hours.</p>
+                        </div>
+                        <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 flex items-center space-x-6">
+                            <div class="text-center">
+                                <span id="napkin-timer" class="text-2xl font-black tracking-tight">07:59:45</span>
+                                <span class="block text-[10px] uppercase font-semibold text-white/80">Time to Change</span>
+                            </div>
+                            <button onclick="resetNapkinTimer()" class="px-4 py-2.5 bg-white text-[#76558F] font-bold text-xs rounded-xl shadow hover:bg-[#F9F3FA] transition">
+                                I Changed It
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CALENDAR & STATS GRID -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6" id="calendar-widget">
+                    <div class="lg:col-span-2 bg-white rounded-[26px] p-6 shadow-sm border border-[#EDE3F0]">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-bold text-[#44334F] text-base flex items-center">
+                                <i class="fa-solid fa-calendar-days text-[#76558F] mr-2"></i> Cycle Calendar (DD/MM/YYYY)
+                            </h3>
+                            <div class="flex items-center space-x-2">
+                                <button onclick="changeMonth(-1)" class="w-8 h-8 rounded-lg hover:bg-[#F9F3FA] flex items-center justify-center text-[#84768B]"><i class="fa-solid fa-chevron-left"></i></button>
+                                <span id="calendar-month-year" class="text-sm font-bold text-[#44334F] w-32 text-center">October 2026</span>
+                                <button onclick="changeMonth(1)" class="w-8 h-8 rounded-lg hover:bg-[#F9F3FA] flex items-center justify-center text-[#84768B]"><i class="fa-solid fa-chevron-right"></i></button>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-wrap items-center gap-4 text-[11px] font-semibold text-[#84768B] mb-4 bg-[#F9F3FA] p-2.5 rounded-xl border border-[#EDE3F0]">
+                            <div class="flex items-center space-x-1.5"><span class="w-3 h-3 rounded-full bg-[#D99BB8] inline-block"></span><span>Period Day</span></div>
+                            <div class="flex items-center space-x-1.5"><span class="w-3 h-3 rounded-full bg-[#E9DDF2] inline-block border border-[#76558F]"></span><span>Estimated Next Period</span></div>
+                            <div class="flex items-center space-x-1.5"><span class="w-3 h-3 rounded-full bg-[#B99ACD] inline-block"></span><span>Ovulation / Fertile</span></div>
+                        </div>
+
+                        <div class="grid grid-cols-7 gap-1 text-center text-xs font-bold text-[#84768B] mb-2">
+                            <span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span>
+                        </div>
+                        <div id="calendar-grid" class="grid grid-cols-7 gap-1.5 text-sm"></div>
+                    </div>
+
+                    <div class="bg-white rounded-[26px] p-6 shadow-sm border border-[#EDE3F0] flex flex-col justify-between space-y-4">
+                        <div>
+                            <h3 class="font-bold text-[#44334F] text-base mb-4 flex items-center">
+                                <i class="fa-solid fa-chart-pie text-[#76558F] mr-2"></i> Cycle Predictions
+                            </h3>
+                            <div class="space-y-4">
+                                <div class="bg-gradient-to-br from-[#F9F3FA] to-[#FFF8F3] p-5 rounded-2xl border-2 border-[#D99BB8] shadow-sm">
+                                    <span class="text-xs uppercase font-bold text-[#76558F] tracking-wider block mb-1"><i class="fa-solid fa-calendar-check mr-1.5"></i> Next Period Date</span>
+                                    <p id="stat-next-period" class="text-xl sm:text-2xl font-black text-[#44334F] tracking-tight">--/--/----</p>
+                                </div>
+                                <div class="bg-gradient-to-br from-[#E9DDF2] to-[#F9F3FA] p-5 rounded-2xl border-2 border-[#B99ACD] shadow-sm">
+                                    <span class="text-xs uppercase font-bold text-[#76558F] tracking-wider block mb-1"><i class="fa-solid fa-wand-magic-sparkles mr-1.5"></i> Estimated Ovulation</span>
+                                    <p id="stat-ovulation" class="text-xl sm:text-2xl font-black text-[#44334F] tracking-tight">--/--/----</p>
+                                </div>
+                                <div class="bg-[#F9F3FA] p-4 rounded-2xl border border-[#EDE3F0]">
+                                    <span class="text-[10px] uppercase font-bold text-[#84768B] tracking-wider block">Current Cycle Day</span>
+                                    <p id="stat-cycle-day" class="text-lg font-bold text-[#44334F] mt-0.5">Day --</p>
+                                </div>
+                            </div>
+                        </div>
+                        <p id="prediction-msg" class="text-[11px] text-[#84768B] text-center italic">* Predictions activate once your questionnaire details are saved.</p>
+                    </div>
+                </div>
+
+                <!-- QUICK CARDS -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pt-4">
+                    <div onclick="switchTab('calculator')" class="bg-white border border-[#EDE3F0] rounded-[20px] p-5 shadow-sm hover:shadow-md cursor-pointer transition">
+                        <div class="w-10 h-10 rounded-xl bg-[#F8EAF0] text-[#A85F83] flex items-center justify-center mb-3"><i class="fa-solid fa-calculator"></i></div>
+                        <h3 class="font-bold text-[#44334F] text-base mb-1">Calculator</h3>
+                        <p class="text-xs text-[#84768B]">Plan future cycles easily.</p>
+                    </div>
+                    <div onclick="switchTab('water')" class="bg-white border border-[#EDE3F0] rounded-[20px] p-5 shadow-sm hover:shadow-md cursor-pointer transition">
+                        <div class="w-10 h-10 rounded-xl bg-[#F0E8F5] text-[#76558F] flex items-center justify-center mb-3"><i class="fa-solid fa-glass-water"></i></div>
+                        <h3 class="font-bold text-[#44334F] text-base mb-1">Water Tracker</h3>
+                        <p class="text-xs text-[#84768B]">Stay hydrated with 2.5L goal.</p>
+                    </div>
+                    <div onclick="switchTab('faq')" class="bg-white border border-[#EDE3F0] rounded-[20px] p-5 shadow-sm hover:shadow-md cursor-pointer transition">
+                        <div class="w-10 h-10 rounded-xl bg-[#FFF0E8] text-[#A87962] flex items-center justify-center mb-3"><i class="fa-solid fa-circle-question"></i></div>
+                        <h3 class="font-bold text-[#44334F] text-base mb-1">FAQ & Remedies</h3>
+                        <p class="text-xs text-[#84768B]">Symptoms and soothing tips.</p>
+                    </div>
+                    <div onclick="openQuestionnaire()" class="bg-white border border-[#EDE3F0] rounded-[20px] p-5 shadow-sm hover:shadow-md cursor-pointer transition">
+                        <div class="w-10 h-10 rounded-xl bg-[#F0E8F5] text-[#76558F] flex items-center justify-center mb-3"><i class="fa-solid fa-user-gear"></i></div>
+                        <h3 class="font-bold text-[#44334F] text-base mb-1">Profile Metrics</h3>
+                        <p class="text-xs text-[#84768B]">Update weight, height & age.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CALCULATOR TAB -->
+            <div id="tab-calculator" class="hidden space-y-6">
+                <div class="bg-white rounded-[30px] p-6 sm:p-8 shadow-sm border border-[#EDE3F0] max-w-2xl mx-auto">
+                    <div class="text-center mb-6">
+                        <div class="w-12 h-12 bg-[#F9F3FA] text-[#76558F] rounded-2xl flex items-center justify-center mx-auto mb-2 text-xl border border-[#EDE3F0]">
+                            <i class="fa-solid fa-calculator"></i>
+                        </div>
+                        <h2 class="text-xl font-bold text-[#44334F]">Period & Ovulation Calculator (DD/MM/YYYY)</h2>
+                        <p class="text-xs text-[#84768B] mt-1">Enter your parameters below to instantly calculate future cycles.</p>
+                    </div>
+                    <form id="calculator-form" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-[#84768B] mb-1">Last Period Start Date (DD/MM/YYYY)</label>
+                            <input type="date" id="calc-last-date" class="w-full px-4 py-3 rounded-xl border border-[#EDE3F0] text-sm focus:ring-2 focus:ring-[#76558F] focus:outline-none bg-[#FFFCFF]">
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-[#84768B] mb-1">Cycle Length (Days)</label>
+                                <input type="number" id="calc-cycle-length" min="20" max="45" value="28" class="w-full px-4 py-3 rounded-xl border border-[#EDE3F0] text-sm focus:ring-2 focus:ring-[#76558F] focus:outline-none bg-[#FFFCFF]">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-[#84768B] mb-1">Period Duration (Days)</label>
+                                <input type="number" id="calc-period-duration" min="2" max="10" value="5" class="w-full px-4 py-3 rounded-xl border border-[#EDE3F0] text-sm focus:ring-2 focus:ring-[#76558F] focus:outline-none bg-[#FFFCFF]">
+                            </div>
+                        </div>
+                        <div class="flex space-x-3 pt-2">
+                            <button type="button" onclick="clearCalculator()" class="w-1/2 py-3.5 bg-[#F9F3FA] hover:bg-[#E9DDF2] text-[#44334F] font-bold text-sm rounded-xl transition border border-[#EDE3F0]">
+                                Clear Prediction
+                            </button>
+                            <button type="submit" class="w-1/2 py-3.5 bg-[#76558F] hover:bg-[#65467E] text-white font-bold text-sm rounded-xl shadow-md transition">
+                                Calculate Predictions
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <div id="calculator-result" class="mt-6 hidden bg-[#F9F3FA] border-2 border-[#D99BB8] rounded-[24px] p-6 space-y-4 shadow-sm">
+                        <h4 class="font-bold text-[#44334F] text-base flex items-center"><i class="fa-solid fa-circle-check text-[#76558F] mr-2"></i> Calculated Results:</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="bg-gradient-to-br from-[#F9F3FA] to-[#FFF8F3] p-5 rounded-2xl border-2 border-[#D99BB8] shadow-sm text-center">
+                                <span class="text-xs uppercase font-bold text-[#76558F] tracking-wider block mb-1">Next Period</span>
+                                <span id="res-next" class="text-xl sm:text-2xl font-black text-[#44334F] tracking-tight">--/--/----</span>
+                            </div>
+                            <div class="bg-gradient-to-br from-[#E9DDF2] to-[#F9F3FA] p-5 rounded-2xl border-2 border-[#B99ACD] shadow-sm text-center">
+                                <span class="text-xs uppercase font-bold text-[#76558F] tracking-wider block mb-1">Fertile Window</span>
+                                <span id="res-fertile" class="text-base sm:text-lg font-black text-[#44334F] tracking-tight">--/--/----</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WATER TRACKER TAB -->
+            <div id="tab-water" class="hidden space-y-6">
+                <div class="max-w-3xl mx-auto space-y-6">
+                    <div class="bg-white rounded-[30px] p-6 sm:p-8 shadow-sm border border-[#EDE3F0] text-center relative overflow-hidden">
+                        <div class="w-16 h-16 bg-[#F0E8F5] text-[#76558F] rounded-3xl flex items-center justify-center mx-auto mb-3 text-2xl shadow-inner border border-[#EDE3F0]">
+                            <i class="fa-solid fa-glass-water"></i>
+                        </div>
+                        <h2 class="text-xl font-bold text-[#44334F]">Daily Hydration Tracker</h2>
+                        <p class="text-xs text-[#84768B] mt-1">Goal: <strong class="text-[#76558F] font-bold">2.5L</strong> per day</p>
+
+                        <div class="my-6 max-w-xs mx-auto">
+                            <div class="flex justify-between text-xs font-bold text-[#84768B] mb-2">
+                                <span id="water-current-text">0.0L Consumed</span>
+                                <span id="water-percent-text">0%</span>
+                            </div>
+                            <div class="w-full bg-[#F9F3FA] h-4 rounded-full overflow-hidden p-0.5 border border-[#EDE3F0]">
+                                <div id="water-progress-bar" class="bg-gradient-to-r from-[#D99BB8] to-[#76558F] h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap justify-center gap-3">
+                            <button onclick="addWater(250)" class="px-4 py-2.5 bg-[#F9F3FA] hover:bg-[#E9DDF2] text-[#76558F] font-bold text-xs rounded-xl border border-[#EDE3F0] transition">+ 250ml Glass</button>
+                            <button onclick="addWater(500)" class="px-4 py-2.5 bg-[#F9F3FA] hover:bg-[#E9DDF2] text-[#76558F] font-bold text-xs rounded-xl border border-[#EDE3F0] transition">+ 500ml Bottle</button>
+                            <button onclick="addWater(1000)" class="px-4 py-2.5 bg-[#F9F3FA] hover:bg-[#E9DDF2] text-[#76558F] font-bold text-xs rounded-xl border border-[#EDE3F0] transition">+ 1.0L Jug</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-[30px] p-6 shadow-sm border border-[#EDE3F0]">
+                        <h3 class="font-bold text-[#44334F] text-sm mb-4 flex items-center">
+                            <i class="fa-solid fa-list-check text-[#76558F] mr-2"></i> Today's Consumption Logs
+                        </h3>
+                        <div id="water-log-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                            <div class="text-xs text-[#84768B] italic col-span-full py-4 text-center bg-[#F9F3FA] rounded-2xl border border-dashed border-[#EDE3F0]">
+                                No water logged yet today. Click above to add!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ & REMEDIES TAB -->
+            <div id="tab-faq" class="hidden space-y-6">
+                <div class="max-w-3xl mx-auto space-y-5">
+                    <div class="text-center mb-6">
+                        <h2 class="text-2xl font-black text-[#44334F]">FAQ & Natural Remedies Guide</h2>
+                        <p class="text-sm text-[#84768B] mt-1">Clear answers to your menstrual health, symptoms, and medical queries.</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="bg-white rounded-[26px] p-6 border border-[#EDE3F0] shadow-sm">
+                            <h4 class="font-bold text-[#76558F] text-base sm:text-lg flex items-center mb-2">
+                                <i class="fa-solid fa-circle-question text-[#76558F] mr-3 text-xl"></i> What kind of physical and emotional symptoms are expected during periods?
+                            </h4>
+                            <p class="text-sm sm:text-base text-[#44334F] leading-relaxed">
+                                Common symptoms include lower abdominal cramps (dysmenorrhea), breast tenderness, bloating, fatigue, mood swings, mild headaches, and lower back aches due to uterine contractions and hormonal shifts.
+                            </p>
+                            <div class="mt-4 pt-3 border-t border-[#EDE3F0] flex items-start space-x-2 text-sm sm:text-base font-semibold text-[#76558F]">
+                                <i class="fa-solid fa-wand-magic-sparkles mt-1"></i>
+                                <span>Quick Remedies: Apply a hot water compress or heating pad to your lower abdomen, sip warm ginger or chamomile tea, and practice light stretching or walking.</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-[26px] p-6 border border-[#EDE3F0] shadow-sm">
+                            <h4 class="font-bold text-[#76558F] text-base sm:text-lg flex items-center mb-2">
+                                <i class="fa-solid fa-circle-question text-[#76558F] mr-3 text-xl"></i> Should a user consult a doctor if she missed her periods for 3-4 months?
+                            </h4>
+                            <p class="text-sm sm:text-base text-[#44334F] leading-relaxed">
+                                <strong class="text-[#76558F] font-bold">Yes, absolutely.</strong> Missing periods for 3 to 4 consecutive months (amenorrhea) outside of pregnancy or breastfeeding is a critical sign that you should consult a gynecologist or doctor for a professional health check-up and hormone evaluation.
+                            </p>
+                        </div>
+
+                        <div class="bg-white rounded-[26px] p-6 border border-[#EDE3F0] shadow-sm">
+                            <h4 class="font-bold text-[#76558F] text-base sm:text-lg flex items-center mb-2">
+                                <i class="fa-solid fa-circle-question text-[#76558F] mr-3 text-xl"></i> How to manage bloating and water retention during cycles?
+                            </h4>
+                            <p class="text-sm sm:text-base text-[#44334F] leading-relaxed">
+                                Hormonal fluctuations cause the body to hold onto extra water. Drinking plenty of pure water (aiming for 2.5L daily), reducing salty and processed foods, and eating potassium-rich foods like bananas help naturally alleviate bloating.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- UPDATE PROFILE / QUESTIONNAIRE MODAL -->
+    <div id="questionnaire-modal" class="fixed inset-0 bg-[#44334F]/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-[30px] shadow-2xl max-w-lg w-full p-6 sm:p-8 border border-[#EDE3F0] max-h-[90vh] overflow-y-auto">
+            <div class="text-center mb-6">
+                <h3 class="text-xl font-bold text-[#44334F]">Update Profile & Cycle Details</h3>
+                <p class="text-xs text-[#84768B] mt-1">Manage your personal metrics and cycle preferences (DD/MM/YYYY format).</p>
+            </div>
+            <form id="questionnaire-form" class="space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-[#84768B] mb-1">Age</label>
+                        <input type="number" id="q-age" min="10" max="80" required class="w-full px-3 py-2.5 rounded-xl border border-[#EDE3F0] text-sm bg-[#FFFCFF]">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-[#84768B] mb-1">Height (cm)</label>
+                        <input type="number" id="q-height-cm" min="100" max="220" oninput="syncHeightFromCm()" required class="w-full px-3 py-2.5 rounded-xl border border-[#EDE3F0] text-sm bg-[#FFFCFF]">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-[#84768B] mb-1">Weight (kg)</label>
+                        <input type="number" id="q-weight" min="30" max="200" step="0.1" required class="w-full px-3 py-2.5 rounded-xl border border-[#EDE3F0] text-sm bg-[#FFFCFF]">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-[#84768B] mb-1">Height (ft / in)</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="number" id="q-height-ft" placeholder="Feet" min="3" max="7" oninput="syncHeightFromFtIn()" class="w-full px-3 py-2.5 rounded-xl border border-[#EDE3F0] text-sm bg-[#FFFCFF]">
+                        <input type="number" id="q-height-in" placeholder="Inches" min="0" max="11" oninput="syncHeightFromFtIn()" class="w-full px-3 py-2.5 rounded-xl border border-[#EDE3F0] text-sm bg-[#FFFCFF]">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-[#84768B] mb-1">Last Period Start Date (DD/MM/YYYY)</label>
+                    <input type="date" id="q-last-date" class="w-full px-3 py-2.5 rounded-xl border border-[#EDE3F0] text-sm bg-[#FFFCFF]">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-[#84768B] mb-1">Period Duration (Days)</label>
+                        <input type="number" id="q-period-duration" min="2" max="10" value="5" required class="w-full px-3 py-2.5 rounded-xl border border-[#EDE3F0] text-sm bg-[#FFFCFF]">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-[#84768B] mb-1">Cycle Length (Days)</label>
+                        <input type="number" id="q-cycle-length" min="20" max="45" value="28" required class="w-full px-3 py-2.5 rounded-xl border border-[#EDE3F0] text-sm bg-[#FFFCFF]">
+                    </div>
+                </div>
+                <div class="flex space-x-3 pt-2">
+                    <button type="button" onclick="closeQuestionnaire()" class="w-1/2 py-3 bg-[#F9F3FA] hover:bg-[#E9DDF2] text-[#44334F] font-bold text-xs rounded-xl transition border border-[#EDE3F0]">Cancel</button>
+                    <button type="submit" class="w-1/2 py-3 bg-[#76558F] hover:bg-[#65467E] text-white font-bold text-xs rounded-xl shadow-md transition">Save Profile</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- AVATAR MODAL -->
+    <div id="avatar-modal" class="fixed inset-0 bg-[#44334F]/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-[30px] shadow-2xl max-w-md w-full p-6 space-y-4 border border-[#EDE3F0]">
+            <h3 class="text-lg font-bold text-[#44334F] text-center">Choose Female Profile Avatar</h3>
+            <div class="space-y-3">
+                <label class="w-full p-3 rounded-xl border border-[#EDE3F0] hover:bg-[#F9F3FA] flex items-center space-x-3 cursor-pointer transition">
+                    <div class="w-10 h-10 rounded-full bg-[#F9F3FA] text-[#76558F] flex items-center justify-center border border-[#EDE3F0]"><i class="fa-solid fa-upload"></i></div>
+                    <div>
+                        <span class="block font-bold text-sm text-[#44334F]">Upload Custom Image</span>
+                        <span class="text-xs text-[#84768B]">Choose photo file from your device</span>
+                    </div>
+                    <input type="file" id="custom-file-input" accept="image/*" class="hidden" onchange="handleFileUpload(event)">
+                </label>
+                <div>
+                    <span class="block text-xs font-semibold text-[#84768B] uppercase tracking-wider mb-2">Select Female Avatar</span>
+                    <div class="grid grid-cols-4 gap-3">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" onclick="setAvatarImg(this.src)" class="w-16 h-16 rounded-2xl object-cover cursor-pointer border-2 border-transparent hover:border-[#76558F] shadow-sm">
+                        <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=150&q=80" onclick="setAvatarImg(this.src)" class="w-16 h-16 rounded-2xl object-cover cursor-pointer border-2 border-transparent hover:border-[#76558F] shadow-sm">
+                        <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=150&q=80" onclick="setAvatarImg(this.src)" class="w-16 h-16 rounded-2xl object-cover cursor-pointer border-2 border-transparent hover:border-[#76558F] shadow-sm">
+                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80" onclick="setAvatarImg(this.src)" class="w-16 h-16 rounded-2xl object-cover cursor-pointer border-2 border-transparent hover:border-[#76558F] shadow-sm">
+                    </div>
+                </div>
+            </div>
+            <button onclick="closeAvatarModal()" class="w-full py-2.5 bg-[#F9F3FA] hover:bg-[#E9DDF2] text-[#44334F] font-bold text-xs rounded-xl transition mt-2 border border-[#EDE3F0]">Cancel</button>
+        </div>
+    </div>
+
+    <!-- CELEBRATION MODAL -->
+    <div id="celebration-modal" class="fixed inset-0 bg-[#44334F]/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-[30px] shadow-2xl max-w-sm w-full p-6 text-center space-y-4 border border-[#EDE3F0]">
+            <div class="w-20 h-20 bg-[#F0E8F5] text-[#76558F] rounded-full flex items-center justify-center mx-auto text-3xl shadow-inner border border-[#EDE3F0]">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+            <h3 class="text-xl font-black text-[#44334F]">Reached the Goal! 🎉</h3>
+            <p class="text-xs text-[#84768B]">Fantastic job staying hydrated today! You have successfully reached your 2.5L water target.</p>
+            <button onclick="closeCelebrationModal()" class="w-full py-3 bg-[#76558F] hover:bg-[#65467E] text-white font-bold text-xs rounded-xl shadow transition">
+                Awesome! Continue
+            </button>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="mt-auto py-8 bg-[#44334F] text-[#F8F0FA]">
+        <div class="shell flex flex-col md:flex-row justify-between items-center gap-6">
+            <div>
+                <strong class="text-lg">Periodics</strong>
+                <p class="text-[#D8C9DF] text-xs mt-1">Understand Your Cycle. Care for Yourself.</p>
+            </div>
+            <div class="flex gap-6 text-xs text-[#E8DDEC]">
+                <button onclick="switchTab('home')" class="hover:text-white transition bg-transparent border-0 cursor-pointer text-[#E8DDEC]">Home</button>
+                <button onclick="switchTab('home')" class="hover:text-white transition bg-transparent border-0 cursor-pointer text-[#E8DDEC]">Calendar</button>
+                <button onclick="switchTab('water')" class="hover:text-white transition bg-transparent border-0 cursor-pointer text-[#E8DDEC]">Water</button>
+                <button onclick="switchTab('faq')" class="hover:text-white transition bg-transparent border-0 cursor-pointer text-[#E8DDEC]">FAQ</button>
+            </div>
+            <p class="text-[#D8C9DF] text-[11px]">Your health information is secure and personal.</p>
+        </div>
+    </footer>
+
+    <!-- SCRIPT LOGIC -->
+    <script>
+        let userData = {
+            name: "",
+            email: "",
+            age: null,
+            heightCm: 162,
+            weight: null,
+            lastDate: "",
+            periodDuration: 5,
+            cycleLength: 28,
+            avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
+        };
+
+        let waterLogs = [];
+        let currentWaterMl = 0;
+        let goalWaterMl = 2500;
+        let currentCalendarDate = new Date();
+        let celebrationShownToday = false;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            let saved = localStorage.getItem('periodicsUser');
+            if (saved) {
+                try {
+                    userData = JSON.parse(saved);
+                    document.getElementById('login-screen').classList.add('hidden');
+                    document.getElementById('main-app').classList.remove('hidden');
+                    updateProfileUI();
+                    calculateAndRender();
+                } catch(e) {
+                    localStorage.removeItem('periodicsUser');
+                }
+            }
+        });
+
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            let nameInput = document.getElementById('user-name').value.trim();
+            let emailInput = document.getElementById('user-email').value.trim();
+            
+            if(!nameInput || !emailInput) return;
+
+            userData.name = nameInput;
+            userData.email = emailInput;
+            
+            saveUserData();
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('hidden');
+            
+            updateProfileUI();
+            if (!userData.lastDate) {
+                openQuestionnaire();
+            } else {
+                calculateAndRender();
+            }
+        });
+
+        document.getElementById('questionnaire-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            userData.age = parseInt(document.getElementById('q-age').value);
+            userData.heightCm = parseFloat(document.getElementById('q-height-cm').value);
+            userData.weight = parseFloat(document.getElementById('q-weight').value);
+            userData.lastDate = document.getElementById('q-last-date').value;
+            userData.periodDuration = parseInt(document.getElementById('q-period-duration').value);
+            userData.cycleLength = parseInt(document.getElementById('q-cycle-length').value);
+
+            saveUserData();
+            document.getElementById('questionnaire-modal').classList.add('hidden');
+            updateProfileUI();
+            calculateAndRender();
+        });
+
+        document.getElementById('calculator-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            let lastDateVal = document.getElementById('calc-last-date').value;
+            let cLen = parseInt(document.getElementById('calc-cycle-length').value);
+            let pDur = parseInt(document.getElementById('calc-period-duration').value);
+
+            if (!lastDateVal) {
+                alert("Please select a valid Last Period Date.");
+                return;
+            }
+
+            let lastDt = new Date(lastDateVal);
+            let nextDt = new Date(lastDt);
+            nextDt.setDate(nextDt.getDate() + cLen);
+
+            let fertileStart = new Date(nextDt);
+            fertileStart.setDate(fertileStart.getDate() - 16);
+            let fertileEnd = new Date(nextDt);
+            fertileEnd.setDate(fertileEnd.getDate() - 12);
+
+            document.getElementById('calculator-result').classList.remove('hidden');
+            document.getElementById('res-next').innerText = formatDateDDMMYYYY(nextDt);
+            document.getElementById('res-fertile').innerText = `${formatDateDDMMYYYY(fertileStart)} - ${formatDateDDMMYYYY(fertileEnd)}`;
+        });
+
+        function clearCalculator() {
+            document.getElementById('calc-last-date').value = "";
+            document.getElementById('calc-cycle-length').value = "28";
+            document.getElementById('calc-period-duration').value = "5";
+            document.getElementById('calculator-result').classList.add('hidden');
+            document.getElementById('res-next').innerText = "--/--/----";
+            document.getElementById('res-fertile').innerText = "--/--/----";
+        }
+
+        function saveUserData() {
+            localStorage.setItem('periodicsUser', JSON.stringify(userData));
+        }
+
+        function logoutUser() {
+            localStorage.removeItem('periodicsUser');
+            document.getElementById('main-app').classList.add('hidden');
+            document.getElementById('login-screen').classList.remove('hidden');
+            document.getElementById('login-form').reset();
+        }
+
+        function syncHeightFromCm() {
+            let cm = parseFloat(document.getElementById('q-height-cm').value);
+            if (!isNaN(cm)) {
+                let totalInches = cm / 2.54;
+                let ft = Math.floor(totalInches / 12);
+                let inc = Math.round(totalInches % 12);
+                document.getElementById('q-height-ft').value = ft;
+                document.getElementById('q-height-in').value = inc;
+            }
+        }
+
+        function syncHeightFromFtIn() {
+            let ft = parseFloat(document.getElementById('q-height-ft').value) || 0;
+            let inc = parseFloat(document.getElementById('q-height-in').value) || 0;
+            let totalCm = Math.round((ft * 12 + inc) * 2.54);
+            if (totalCm > 0) {
+                document.getElementById('q-height-cm').value = totalCm;
+            }
+        }
+
+        function formatHeightDisplay(cm) {
+            if (!cm) return "--";
+            let totalInches = cm / 2.54;
+            let ft = Math.floor(totalInches / 12);
+            let inc = Math.round(totalInches % 12);
+            return `${cm} cm (${ft}'${inc}")`;
+        }
+
+        function updateProfileUI() {
+            document.getElementById('profile-display-name').innerText = userData.name || "User";
+            document.getElementById('profile-display-email').innerText = userData.email || "";
+            document.getElementById('profile-display-age').innerText = userData.age || "--";
+            document.getElementById('profile-display-height').innerText = formatHeightDisplay(userData.heightCm);
+            document.getElementById('profile-display-weight').innerText = userData.weight !== null ? userData.weight : "--";
+            document.getElementById('profile-avatar-img').src = userData.avatar;
+
+            let badge = document.getElementById('weight-badge');
+            if (userData.weight === null) {
+                badge.className = "hidden";
+            } else if (userData.weight < 44) {
+                badge.className = "px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-800";
+                badge.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-1"></i> Underweight (<44kg)';
+            } else if (userData.weight > 80) {
+                badge.className = "px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-800";
+                badge.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-1"></i> Overweight (>80kg)';
+            } else {
+                badge.className = "px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800";
+                badge.innerHTML = '<i class="fa-solid fa-check mr-1"></i> Normal';
+            }
+        }
+
+        function calculateAndRender() {
+            let advisoryBanner = document.getElementById('doctor-advisory-banner');
+            let nextPeriodElem = document.getElementById('stat-next-period');
+            let ovulationElem = document.getElementById('stat-ovulation');
+            let cycleDayElem = document.getElementById('stat-cycle-day');
+            let predictionMsg = document.getElementById('prediction-msg');
+
+            if (!userData.lastDate) {
+                advisoryBanner.classList.add('hidden');
+                nextPeriodElem.innerText = "--/--/----";
+                ovulationElem.innerText = "--/--/----";
+                cycleDayElem.innerText = "Day --";
+                predictionMsg.classList.remove('hidden');
+                renderCalendar();
+                return;
+            }
+
+            predictionMsg.classList.add('hidden');
+            let lastDt = new Date(userData.lastDate);
+            let today = new Date();
+            
+            let diffTime = Math.abs(today - lastDt);
+            let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays >= 90) {
+                advisoryBanner.classList.remove('hidden');
+                document.getElementById('advisory-text').innerText = `It has been ${diffDays} days (${Math.floor(diffDays/30)} months) since your last recorded period. For your well-being, please check in with a doctor.`;
+            } else {
+                advisoryBanner.classList.add('hidden');
+            }
+
+            let nextDt = new Date(lastDt);
+            let onPeriod = false;
+
+            while(nextDt <= today) {
+                let pEnd = new Date(nextDt);
+                pEnd.setDate(pEnd.getDate() + userData.periodDuration);
+                if(today >= nextDt && today <= pEnd) {
+                    onPeriod = true;
+                    break;
+                }
+                nextDt.setDate(nextDt.getDate() + userData.cycleLength);
+            }
+
+            if (onPeriod) {
+                document.getElementById('napkin-reminder-card').classList.remove('hidden');
+            } else {
+                document.getElementById('napkin-reminder-card').classList.add('hidden');
+            }
+
+            let currentCycleNext = new Date(userData.lastDate);
+            while(currentCycleNext <= today) {
+                let temp = new Date(currentCycleNext);
+                temp.setDate(temp.getDate() + userData.cycleLength);
+                if(temp > today) break;
+                currentCycleNext = temp;
+            }
+            let cycleDay = Math.floor((today - currentCycleNext) / (1000 * 60 * 60 * 24)) + 1;
+            cycleDayElem.innerText = `Day ${cycleDay > 0 ? cycleDay : 1}`;
+
+            let predictedNext = new Date(currentCycleNext);
+            predictedNext.setDate(predictedNext.getDate() + userData.cycleLength);
+            nextPeriodElem.innerText = formatDateDDMMYYYY(predictedNext);
+
+            let ovulation = new Date(predictedNext);
+            ovulation.setDate(ovulation.getDate() - 14);
+            ovulationElem.innerText = formatDateDDMMYYYY(ovulation);
+
+            renderCalendar();
+        }
+
+        function formatDateDDMMYYYY(date) {
+            if (!date || isNaN(date)) return "--/--/----";
+            let dd = String(date.getDate()).padStart(2, '0');
+            let mm = String(date.getMonth() + 1).padStart(2, '0');
+            let yyyy = date.getFullYear();
+            return `${dd}/${mm}/${yyyy}`;
+        }
+
+        function renderCalendar() {
+            let grid = document.getElementById('calendar-grid');
+            grid.innerHTML = "";
+            let year = currentCalendarDate.getFullYear();
+            let month = currentCalendarDate.getMonth();
+
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            document.getElementById('calendar-month-year').innerText = `${monthNames[month]} ${year}`;
+
+            let firstDayIndex = (new Date(year, month, 1).getDay() + 6) % 7;
+            let totalDays = new Date(year, month + 1, 0).getDate();
+
+            for(let i=0; i<firstDayIndex; i++) {
+                grid.innerHTML += `<div></div>`;
+            }
+
+            let periodDaysSet = new Set();
+            let estimatedPeriodSet = new Set();
+            let ovulationSet = new Set();
+
+            if (userData.lastDate && userData.cycleLength && userData.periodDuration) {
+                let baseDate = new Date(userData.lastDate);
+                for (let i = -12; i <= 12; i++) {
+                    let cycleStart = new Date(baseDate);
+                    cycleStart.setDate(cycleStart.getDate() + (i * userData.cycleLength));
+                    
+                    for (let d = 0; d < userData.periodDuration; d++) {
+                        let pDay = new Date(cycleStart);
+                        pDay.setDate(pDay.getDate() + d);
+                        if (pDay.getFullYear() === year && pDay.getMonth() === month) {
+                            if (i <= 0) {
+                                periodDaysSet.add(pDay.getDate());
+                            } else {
+                                estimatedPeriodSet.add(pDay.getDate());
+                            }
+                        }
+                    }
+
+                    let nextCycle = new Date(cycleStart);
+                    nextCycle.setDate(nextCycle.getDate() + userData.cycleLength);
+                    let ovDay = new Date(nextCycle);
+                    ovDay.setDate(ovDay.getDate() - 14);
+                    if (ovDay.getFullYear() === year && ovDay.getMonth() === month) {
+                        ovulationSet.add(ovDay.getDate());
+                    }
+                }
+            }
+
+            for(let d=1; d<=totalDays; d++) {
+                let isToday = (d === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear());
+                let bgClass = "bg-[#F9F3FA] text-[#44334F] hover:bg-[#E9DDF2]";
+                let badgeHtml = "";
+
+                if (periodDaysSet.has(d)) {
+                    bgClass = "bg-[#D99BB8] text-white shadow-sm font-bold";
+                    badgeHtml = `<span class="absolute bottom-0.5 text-[8px] uppercase tracking-tighter opacity-90">Period</span>`;
+                } else if (estimatedPeriodSet.has(d)) {
+                    bgClass = "bg-[#E9DDF2] text-[#76558F] border border-[#76558F] shadow-sm font-bold";
+                    badgeHtml = `<span class="absolute bottom-0.5 text-[8px] uppercase tracking-tighter">Est.</span>`;
+                } else if (ovulationSet.has(d)) {
+                    bgClass = "bg-[#B99ACD] text-white shadow-sm font-bold";
+                    badgeHtml = `<span class="absolute bottom-0.5 text-[8px] uppercase tracking-tighter">Ovulation</span>`;
+                } else if (isToday) {
+                    bgClass = "bg-[#76558F] text-white shadow-sm font-bold";
+                }
+
+                grid.innerHTML += `
+                    <div class="h-10 relative flex flex-col items-center justify-center rounded-xl text-xs font-semibold ${bgClass} transition">
+                        <span>${d}</span>
+                        ${badgeHtml}
+                    </div>
+                `;
+            }
+        }
+
+        function changeMonth(dir) {
+            currentCalendarDate.setMonth(currentCalendarDate.getMonth() + dir);
+            renderCalendar();
+        }
+
+        function addWater(amount) {
+            currentWaterMl += amount;
+            waterLogs.push({ time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}), amount: amount });
+            updateWaterUI();
+
+            if(currentWaterMl >= goalWaterMl && !celebrationShownToday) {
+                celebrationShownToday = true;
+                document.getElementById('celebration-modal').classList.remove('hidden');
+            }
+        }
+
+        function updateWaterUI() {
+            let liters = (currentWaterMl / 1000).toFixed(1);
+            document.getElementById('water-current-text').innerText = `${liters}L / 2.5L Consumed`;
+            let pct = Math.min(Math.round((currentWaterMl / goalWaterMl) * 100), 100);
+            document.getElementById('water-percent-text').innerText = `${pct}%`;
+            document.getElementById('water-progress-bar').style.width = `${pct}%`;
+
+            let container = document.getElementById('water-log-container');
+            if(waterLogs.length === 0) {
+                container.innerHTML = `<div class="text-xs text-[#84768B] italic col-span-full py-4 text-center bg-[#F9F3FA] rounded-2xl border border-dashed border-[#EDE3F0]">No water logged yet today. Click above to add!</div>`;
+                return;
+            }
+
+            container.innerHTML = waterLogs.map(log => `
+                <div class="bg-[#F0E8F5] border border-[#EDE3F0] p-3 rounded-2xl flex items-center justify-between shadow-sm">
+                    <span class="text-xs font-bold text-[#76558F]"><i class="fa-solid fa-glass-water mr-1.5 text-[#76558F]"></i> ${log.amount} ml</span>
+                    <span class="text-[10px] font-semibold text-[#84768B]">${log.time}</span>
+                </div>
+            `).join('');
+        }
+
+        function closeCelebrationModal() {
+            document.getElementById('celebration-modal').classList.add('hidden');
+        }
+
+        function resetNapkinTimer() {
+            alert("Napkin reminder timer reset successfully! Next alert in 8 hours.");
+        }
+
+        function openQuestionnaire() {
+            document.getElementById('q-age').value = userData.age || 24;
+            document.getElementById('q-height-cm').value = userData.heightCm || 162;
+            syncHeightFromCm();
+            document.getElementById('q-weight').value = userData.weight !== null ? userData.weight : 58;
+            document.getElementById('q-last-date').value = userData.lastDate || "";
+            document.getElementById('q-period-duration').value = userData.periodDuration || 5;
+            document.getElementById('q-cycle-length').value = userData.cycleLength || 28;
+            document.getElementById('questionnaire-modal').classList.remove('hidden');
+        }
+
+        function closeQuestionnaire() {
+            document.getElementById('questionnaire-modal').classList.add('hidden');
+        }
+
+        function openAvatarModal() {
+            document.getElementById('avatar-modal').classList.remove('hidden');
+        }
+
+        function closeAvatarModal() {
+            document.getElementById('avatar-modal').classList.add('hidden');
+        }
+
+        function handleFileUpload(event) {
+            let file = event.target.files[0];
+            if(file) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    userData.avatar = e.target.result;
+                    saveUserData();
+                    updateProfileUI();
+                    closeAvatarModal();
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function setAvatarImg(src) {
+            userData.avatar = src;
+            saveUserData();
+            updateProfileUI();
+            closeAvatarModal();
+        }
+
+        function switchTab(tabName) {
+            ['home', 'calculator', 'water', 'faq'].forEach(t => {
+                let el = document.getElementById(`tab-${t}`);
+                if(el) el.classList.add('hidden');
+            });
+            let target = document.getElementById(`tab-${tabName}`);
+            if(target) target.classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
